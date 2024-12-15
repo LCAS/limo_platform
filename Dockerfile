@@ -39,7 +39,7 @@ COPY ./src/*/package.xml /tmp/src/_workspace/src/_pkgs_xmls
 COPY ./src/*/*/package.xml /tmp/src/_workspace/src/_pkgs_xmls
 COPY ./src/*/*/*/package.xml /tmp/src/_workspace/src/_pkgs_xmls
 COPY ./src/*/*/*/*/package.xml /tmp/src/_workspace/src/_pkgs_xmls
-COPY ./.docker/*repos /tmp/.docker/
+COPY ./.docker/*.repos* /tmp/.docker/
 RUN cd /tmp/src && for r in /tmp/.docker/*.repos; do vcs import < $r ; done
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
         cd /tmp/src; \
@@ -58,7 +58,7 @@ RUN rosdep update --rosdistro=${ROS_DISTRO} && apt-get update
 RUN rosdep install --from-paths /tmp/src --ignore-src -r -y && rm -rf /tmp/src && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/src
 
 FROM depinstaller as depbuilder
-COPY .docker/*repos .docker/*.sh /tmp/.docker/
+COPY .docker/*.repos* .docker/*.sh /tmp/.docker/
 
 # get the source tree and build it (include gazebo only for arm64 platform as it is not available for arm64)
 # see https://github.com/gazebosim/gazebo-classic/issues/3236
