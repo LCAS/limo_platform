@@ -65,7 +65,7 @@ COPY .docker/*.repos* .docker/*.sh /tmp/.docker/
 RUN mkdir -p /opt/ros/lcas/src && \
     cd /opt/ros/lcas/src && \
     for r in /tmp/.docker/*.repos; do vcs import < $r ; done
-RUN  if [ "${TARGETARCH}" = "arm64" ]; then cd /opt/ros/lcas/src; vcs import < /tmp/.devcontainer/gazebo_ros_pkgs.repos-arm64; fi
+RUN  if [ "${TARGETARCH}" = "arm64" ]; then cd /opt/ros/lcas/src; vcs import < /tmp/.docker/gazebo_ros_pkgs.repos-arm64; fi
 
 RUN . /opt/ros/humble/setup.sh && \
     apt update && \
