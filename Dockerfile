@@ -130,4 +130,7 @@ RUN cd /opt/ros/lcas && colcon build && \
     rm -rf /opt/ros/lcas/src/ /opt/ros/lcas/build/ /opt/ros/lcas/log/
 
 USER ros
+WORKDIR /home/ros
+ENV ROS_LOCALHOST_ONLY=1
+
 ENV SHELL=/bin/bash
