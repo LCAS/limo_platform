@@ -1,0 +1,19 @@
+version: '3'
+services:
+  limo_simulation:
+    image: lcas.lincoln.ac.uk/lcas/limo_platform_amd64:latest
+    user: "ros"
+    command: bash -c "source /opt/ros/lcas/install/setup.bash && ros2 launch limo_gazebosim limo_gazebo_diff.launch.py"
+    restart: unless-stopped
+    environment:
+      - 'ROS_LOCALHOST_ONLY=1'
+      - 'ROS_DOMAIN_ID=0'
+    ports:
+      - "5801"
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
