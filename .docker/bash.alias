@@ -1,0 +1,2 @@
+alias limosim="ros2 launch limo_gazebosim limo_gazebo_diff.launch.py"
+alias limolaunch="ros2 launch limo_bringup limo_start.launch.py"

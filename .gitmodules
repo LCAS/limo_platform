@@ -1,0 +1,4 @@
+[submodule "src/limo_ros2"]
+	path = src/limo_ros2
+	url = https://github.com/LCAS/limo_ros2
+	shallow = true
