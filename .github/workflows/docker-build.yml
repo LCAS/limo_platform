@@ -62,7 +62,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: .
-        file: .devcontainer/Dockerfile
+        file: ./Dockerfile
         platforms: linux/amd64
         pull: true
         push: true
@@ -129,7 +129,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: .
-        file: .devcontainer/Dockerfile
+        file: ./Dockerfile
         platforms: linux/arm64
         pull: true
         push: true
