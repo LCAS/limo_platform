@@ -132,5 +132,4 @@ RUN cd /opt/ros/lcas && colcon build && \
 USER ros
 WORKDIR /home/ros
 ENV ROS_LOCALHOST_ONLY=1
-
 ENV SHELL=/bin/bash

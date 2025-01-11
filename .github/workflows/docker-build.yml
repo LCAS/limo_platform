@@ -13,80 +13,15 @@ on:
 jobs:
   build-docker-image:
     if: github.repository_owner == 'LCAS'
-    runs-on: lcas
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - base_image: lcas.lincoln.ac.uk/lcas/ros:jammy-humble-cuda12.2-opengl-1.1
-            ros_distro: humble
-            push_image: lcas.lincoln.ac.uk/lcas/limo_platform_amd64
-  
-    steps:
-    - name: Node Js
-      uses: actions/setup-node@v4
-      with:
-        node-version: "^16.13.0 || >=18.0.0"
-
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 1
-        submodules: 'recursive'
-
-    - name: What
-      run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-
-    - name: Docker Login LCAS
-      uses: docker/login-action@v3
-      with:
-        registry: lcas.lincoln.ac.uk
-        username: ${{ secrets.LCAS_REGISTRY_PUSHER }}
-        password: ${{ secrets.LCAS_REGISTRY_TOKEN }}
-
-    - name: Docker meta
-      id: meta_public
-      uses: docker/metadata-action@v5
-      with:
-        # list of Docker images to use as base name for tags
-        images: |
-          ${{ matrix.push_image }}
-        # generate Docker tags based on the following events/attributes
-        tags: |
-          type=raw,value=staging
-          type=raw,enable=${{ github.event_name != 'pull_request' }},value=latest
-          type=ref,enable=${{ github.event_name != 'pull_request' }},event=branch
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}        
-
-    - name: Build Public Docker Image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: ./Dockerfile
-        platforms: linux/amd64
-        pull: true
-        push: true
-        tags: ${{ steps.meta_public.outputs.tags }}
-        labels: ${{ steps.meta_public.outputs.labels }}
-        build-args: |
-            BASE_IMAGE=${{ matrix.base_image }}
-            BRANCH=${{ env.BRANCH }}
-            ROS_DISTRO=${{ matrix.ros_distro }}
-
-
-  build-arm-docker-image:
-    if: github.repository_owner == 'LCAS'
+    name: Build Docker Image (based on ${{ matrix.base_image }}, triggered by ${{ github.event_name }})
     runs-on: 
-      - lcas-runc
-      - runc
+      - lcas
+      - qemu
     strategy:
       fail-fast: false
       matrix:
         include:
-          - base_image: lcas.lincoln.ac.uk/lcas/ros:jammy-humble-cuda12.2-opengl-arm64-1.1
-            ros_distro: humble
-            push_image: lcas.lincoln.ac.uk/lcas/limo_platform_arm64
+          - base_image: lcas.lincoln.ac.uk/lcas/ros-docker-images:jammy-cuda11.8-humble-2
   
     steps:
     - name: Node Js
@@ -109,15 +44,17 @@ jobs:
         username: ${{ secrets.LCAS_REGISTRY_PUSHER }}
         password: ${{ secrets.LCAS_REGISTRY_TOKEN }}
 
+    - name: "image name from repo name"
+      id: docker_image_name
+      run: echo "docker_image=${{ github.repository }}" | tr '[:upper:]' '[:lower:]' |sed 's/[^0-9,a-z,A-Z,=,_,\/]/-/g' >>${GITHUB_OUTPUT}  
+
     - name: Docker meta
       id: meta_public
       uses: docker/metadata-action@v5
       with:
-        flavor: |
-          latest=false
         # list of Docker images to use as base name for tags
         images: |
-          ${{ matrix.push_image }}
+          lcas.lincoln.ac.uk/${{ steps.docker_image_name.outputs.docker_image }}
         # generate Docker tags based on the following events/attributes
         tags: |
           type=raw,value=staging
@@ -132,13 +69,12 @@ jobs:
       with:
         context: .
         file: ./Dockerfile
-        platforms: linux/arm64
-        pull: true
+        platforms: linux/amd64,linux/arm64
         push: true
+        cache-from: type=registry,ref=lcas.lincoln.ac.uk/cache/${{ steps.docker_image_name.outputs.docker_image }}:latest
+        cache-to: type=registry,ref=lcas.lincoln.ac.uk/cache/${{ steps.docker_image_name.outputs.docker_image }}:latest,mode=max
         tags: ${{ steps.meta_public.outputs.tags }}
         labels: ${{ steps.meta_public.outputs.labels }}
         build-args: |
             BASE_IMAGE=${{ matrix.base_image }}
             BRANCH=${{ env.BRANCH }}
-            ROS_DISTRO=${{ matrix.ros_distro }}
-          
