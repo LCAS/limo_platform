@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - base_image: lcas.lincoln.ac.uk/lcas/ros-docker-images:jammy-cuda11.8-humble-2
+          - base_image: lcas.lincoln.ac.uk/lcas/ros-docker-images:westonrobot-humble-2
   
     steps:
     - name: Node Js
