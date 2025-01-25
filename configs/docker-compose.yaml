@@ -21,7 +21,7 @@ services:
     - ROS_DISTRO=humble
 
   limo_drivers:
-    image: lcas.lincoln.ac.uk/lcas/ros-docker-images:westonrobot-humble-2
+    image: lcas.lincoln.ac.uk/lcas/limo_platform:2
             #lcas.lincoln.ac.uk/lcas/limo_platform:staging
 
     user: "ros"
@@ -35,15 +35,17 @@ services:
     hostname: "${ROBOT_NAME}"
     # nned privileged mode to access the camera and hardware
     privileged: true
-    command: bash -c "while true; do sleep 10; done"
+    ipc: host
+    #command: bash -c "while true; do sleep 10; done"
     #command: bash -c "zenoh-bridge-ros2dds -r 8080 -l tcp/0.0.0.0:8888"
-    #command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; (ros2 launch astra_camera dabai.launch.py &); ros2 launch limo_bringup limo_start.launch.py"
+    command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; (ros2 launch astra_camera dabai.launch.py &); ros2 launch limo_bringup limo_start.launch.py"
     volumes:
-      # - /dev:/dev
+      - /dev:/dev
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     runtime: nvidia
     restart: unless-stopped
+    shm_size: '2gb' 
     environment:
       # always use virtual desktop
       - DISPLAY:1
