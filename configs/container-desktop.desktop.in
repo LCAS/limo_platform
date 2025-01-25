@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Open Container Desktop
+Exec=chromium-browser --start-fullscreen http://localhost:5801
+Icon=${ICON_PATH}/novnc.png
+Terminal=false
+Categories=Utility;
+
