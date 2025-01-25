@@ -45,6 +45,6 @@
 	"hostRequirements": {
 		"gpu": "optional",
 		"cpus": 2,
-		"memory": "6gb"
+		"memory": "3gb"
 	}
 }

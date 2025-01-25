@@ -1,4 +1,4 @@
-version: '3'
+name: limo_platform
 services:
   filebrowser:
     image: filebrowser/filebrowser
@@ -23,7 +23,12 @@ services:
     
     # start the Zenoh router to allow remote access on port 8888
     # also allows REST API access via Zenoh on port 8080
-    command: "-r 8000 -l tcp/0.0.0.0:7447 router"
+    #command: "-r 8000 -l tcp/0.0.0.0:7447 router"
+    command: "-c /etc/zenoh/zenoh.json5 router"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./zenoh.json5:/etc/zenoh/zenoh.json5:ro
     links:
       - limo_drivers
 
