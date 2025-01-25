@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zenoh Docker Off
+Exec=docker compose -f ${DOCKER_COMPOSE_FILE} down
+Icon=${ICON_PATH}/docker-off.png
+Terminal=false
+Categories=Utility;
+

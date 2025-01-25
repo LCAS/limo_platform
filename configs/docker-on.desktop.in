@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zenoh Docker On
+Exec=docker compose -f ${DOCKER_COMPOSE_FILE} up -d
+Icon=${ICON_PATH}/docker-on.png
+Terminal=false
+Categories=Utility;
+

@@ -1,5 +1,16 @@
 version: '3'
 services:
+  filebrowser:
+    image: filebrowser/filebrowser
+    restart: "unless-stopped"
+    networks:
+      - rosnet
+    ports:
+      - 8080:8080
+    volumes:
+      - ${HOME}:/srv
+    command: -r /srv --noauth -b "${HOME}" -d /tmp/database.db -p 8080 --disable-exec
+
   zenoh_router: 
     image: eclipse/zenoh-bridge-ros2dds:latest
     restart: "unless-stopped"
@@ -41,6 +52,7 @@ services:
     command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; (ros2 launch astra_camera dabai.launch.py &); ros2 launch limo_bringup limo_start.launch.py"
     volumes:
       - /dev:/dev
+      - ${HOME}:/home/ros/robot_home
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     runtime: nvidia

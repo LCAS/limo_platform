@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Shutdown
+Exec=shutdown now
+Icon=${ICON_PATH}/power-off.png
+Terminal=false
+Categories=Utility;
+
