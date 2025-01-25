@@ -2,6 +2,12 @@
 
 ## Using the Docker image for the real robot
 
+## Requirements
+
+* an environment variable `ROBOT_NAME` is expected to be defined, either in `.env` or in the environment (e.g. `~/.bashrc`)
+* Docker is needed with the NIVIDA runtime running and tested
+
+
 ### Starting the Container
 
 1. Navigate to the `configs` directory of this repository:
@@ -25,3 +31,6 @@ docker compose up -d && docker compose logs -f
 ### Stopping the container
 
 1. `docker compose down`, again in the `configs` directory
+
+
+## 
