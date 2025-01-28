@@ -1,0 +1,33 @@
+background no
+use_xft yes
+xftfont DejaVu Sans:size=16
+xftalpha 0.8
+update_interval 1.0
+total_run_times 0
+own_window yes
+own_window_type desktop
+own_window_transparent yes
+own_window_argb_visual yes
+own_window_argb_value 0
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+draw_shades no
+draw_outline no
+draw_borders no
+stippled_borders 0
+border_inner_margin 0
+border_outer_margin 0
+minimum_size 200 100
+maximum_width 500
+gap_x 40
+gap_y 70
+alignment top_right
+no_buffers yes
+uppercase no
+override_utf8_locale yes
+default_color white
+
+TEXT
+${font DejaVu Sans:size=32}${color white}${nodename}
+${font DejaVu Sans:size=24}${color white}${addr wlan0}
+${font DejaVu Sans:size=24}${color white}${execpi 10 ~/scripts/check_container.sh}

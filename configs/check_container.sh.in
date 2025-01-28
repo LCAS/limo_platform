@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#CONTAINER_NAME="${DOCKER_CONTAINER_NAME}"
+
+CONTAINER_STATUS=$(docker ps -a --filter "name=${DOCKER_CONTAINER_NAME}" --format "{{.Status}}")
+
+if [ -z "$(docker ps -a --filter 'name=${DOCKER_CONTAINER_NAME}' --format '{{.Status}}')" ]; then
+    echo "Container Shutdown"
+elif [[ "$(docker ps -a --filter 'name=${DOCKER_CONTAINER_NAME}' --format '{{.Status}}')" == *"Up"* ]]; then
+    echo "Container Running"
+elif [[ "$(docker ps -a --filter 'name=${DOCKER_CONTAINER_NAME}' --format '{{.Status}}')" == *"Exited"* ]]; then
+    echo "Container Error"
+else
+    echo "Container Pending"
+fi
+

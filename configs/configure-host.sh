@@ -39,6 +39,7 @@ add_to_env_file "ROBOT_NAME" "`hostname`"
 add_to_env_file "ICON_PATH" "${CONFIGS_DIR}/icons"
 add_to_env_file "DOCKER_COMPOSE_FILE" "${CONFIGS_DIR}/docker-compose.yaml"
 add_to_env_file "LIMO_PLATFORM_DIR" "${LIMO_PLATFORM_DIR}"
+add_to_env_file "LIMO_PLATFORM_DIR" "${LIMO_PLATFORM_DIR}"
 
 echo "configure Desktop shortcuts"
 for file in ${CONFIGS_DIR}/*.desktop.in; do
@@ -53,5 +54,11 @@ for file in ${CONFIGS_DIR}/*.desktop.in; do
     fi
     envsubst < ${file} > ${dest_file}
 done
+echo "configure docker check script"
+export DOCKER_CONTAINER_NAME=limo_platform-limo_drivers-1
+envsubst < ./check_container.sh.in > ${HOME}/scripts/check_container.sh
+chmod +x ${HOME}/scripts/check_container.sh
+cp -f conkyrc ${HOME}/.conkyrc
+
 
 #m4 ${CONFIGS_DIR}/docker-off.desktop.in > ${HOME}/Desktop/limo.desktop
