@@ -54,11 +54,25 @@ for file in ${CONFIGS_DIR}/*.desktop.in; do
     fi
     envsubst < ${file} > ${dest_file}
 done
+
+echo "installing conky - if not already installed"
+apt update -y
+apt upgrade -y
+apt install conky-all -y
+
 echo "configure docker check script"
 export DOCKER_CONTAINER_NAME=limo_platform-limo_drivers-1
-envsubst < ./check_container.sh.in > ${HOME}/scripts/check_container.sh
+envsubst < ${CONFIGS_DIR}/check_container.sh.in > ${HOME}/scripts/check_container.sh
 chmod +x ${HOME}/scripts/check_container.sh
-cp -f conkyrc ${HOME}/.conkyrc
+cp -f ${CONFIGS_DIR}/conkyrc ${HOME}/.conkyrc
+
+echo "preloading the docker image"
+docker compose -f ${DOCKER_COMPOSE_FILE} pull
+docker compose -f ${DOCKER_COMPOSE_FILE} up -d
+
+echo "pruning docker system"
+docker system prune -af
+
 
 
 #m4 ${CONFIGS_DIR}/docker-off.desktop.in > ${HOME}/Desktop/limo.desktop
