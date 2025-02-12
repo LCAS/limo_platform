@@ -44,8 +44,11 @@ services:
 
     # expose desktop access
     ports:
+      # port for novnc
       - 5801:5801
       - 5901:5901
+      # port for code-serer
+      - 9999:9999
     
     # NOTE: We expect the environment varibable ROBOT_NAME to be set, e.g. in `.env`
     hostname: "${ROBOT_NAME}"
@@ -54,7 +57,7 @@ services:
     ipc: host
     #command: bash -c "while true; do sleep 10; done"
     #command: bash -c "zenoh-bridge-ros2dds -r 8080 -l tcp/0.0.0.0:8888"
-    command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; (ros2 launch astra_camera dabai.launch.py &); ros2 launch limo_bringup limo_start.launch.py"
+    command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; (code-server --auth none -an coltrane --bind-addr 0.0.0.0:9999 &);(ros2 launch astra_camera dabai.launch.py &); ros2 launch limo_bringup limo_start.launch.py"
     volumes:
       - /dev:/dev
       - ${HOME}:/home/ros/robot_home
