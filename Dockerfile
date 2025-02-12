@@ -129,6 +129,8 @@ RUN . /opt/ros/lcas/install/setup.sh && \
 RUN cd /opt/ros/lcas && colcon build && \
     rm -rf /opt/ros/lcas/src/ /opt/ros/lcas/build/ /opt/ros/lcas/log/
 
+RUN curl -L https://coder.com/install.sh | sh
+
 USER ros
 WORKDIR /home/ros
 ENV SHELL=/bin/bash
