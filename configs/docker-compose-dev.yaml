@@ -13,6 +13,17 @@ services:
 
   limo_drivers:
     image: lcas.lincoln.ac.uk/lcas/limo_platform:staging
+    build:
+      context: ..
+      cache_from:
+        - lcas.lincoln.ac.uk/lcas/ros-docker-images:westonrobot-humble-2
+        - lcas.lincoln.ac.uk/cache/lcas/limo_platform:latest
+        - lcas.lincoln.ac.uk/lcas/limo_platform:staging
+        - lcas.lincoln.ac.uk/lcas/limo_platform:2
+
+      args:
+        - BASE_IMAGE=lcas.lincoln.ac.uk/lcas/ros-docker-images:westonrobot-humble-2
+
     ports:
       - 5801
       - 5901

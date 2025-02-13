@@ -38,7 +38,6 @@ services:
 
   limo_drivers:
     image: lcas.lincoln.ac.uk/lcas/limo_platform:2
-            #lcas.lincoln.ac.uk/lcas/limo_platform:staging
 
     user: "ros"
 
