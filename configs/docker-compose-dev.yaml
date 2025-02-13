@@ -1,0 +1,26 @@
+name: limo_platform
+services:
+  filebrowser:
+    restart: no
+    ports:
+      - 8080
+
+  zenoh_router: 
+    restart: no
+    ports:
+      - 7447
+      - 8000
+
+  limo_drivers:
+    image: lcas.lincoln.ac.uk/lcas/limo_platform:staging
+    ports:
+      - 5801
+      - 5901
+      - 9999
+    
+    hostname: testlimo
+    privileged: false
+    command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; code-server --auth none -an coltrane --bind-addr 0.0.0.0:9999"
+    volumes:
+    runtime: 
+    restart: no
