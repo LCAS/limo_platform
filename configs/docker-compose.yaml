@@ -38,7 +38,7 @@ services:
 
   limo_drivers:
     image: lcas.lincoln.ac.uk/lcas/limo_platform:2
-
+    pull_pulicy: always
     user: "ros"
 
     # expose desktop access
@@ -63,7 +63,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     runtime: nvidia
-    restart: unless-stopped
     shm_size: '2gb' 
     environment:
       # always use virtual desktop
