@@ -2,7 +2,7 @@ name: limo_platform
 services:
   filebrowser:
     image: filebrowser/filebrowser
-    restart: "unless-stopped"
+    pull_policy: always
     networks:
       - rosnet
     ports:
@@ -13,7 +13,7 @@ services:
 
   zenoh_router: 
     image: eclipse/zenoh-bridge-ros2dds:latest
-    restart: "unless-stopped"
+    pull_policy: always
     networks:
       - rosnet
     # expose REST API, and Zenoh API
@@ -38,7 +38,7 @@ services:
 
   limo_drivers:
     image: lcas.lincoln.ac.uk/lcas/limo_platform:2
-    pull_pulicy: always
+    pull_policy: always
     user: "ros"
 
     # expose desktop access

@@ -1,18 +1,44 @@
 name: limo_platform
 services:
   filebrowser:
-    restart: no
+    image: filebrowser/filebrowser
+    pull_policy: always
+    networks:
+      - rosnet
     ports:
-      - 8080
+      - 8080:8080
+    volumes:
+      - ${HOME}:/srv
+    command: -r /srv --noauth -b "${HOME}" -d /tmp/database.db -p 8080 --disable-exec
 
   zenoh_router: 
-    restart: no
+    image: eclipse/zenoh-bridge-ros2dds:latest
+    pull_policy: always
+    networks:
+      - rosnet
+    # expose REST API, and Zenoh API
     ports:
-      - 7447
-      - 8000
+      - 7447:7447
+      - 8000:8000
+    
+    # start the Zenoh router to allow remote access on port 8888
+    # also allows REST API access via Zenoh on port 8080
+    #command: "-r 8000 -l tcp/0.0.0.0:7447 router"
+    command: "-c /etc/zenoh/zenoh.json5 router"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./zenoh.json5:/etc/zenoh/zenoh.json5:ro
+    links:
+      - limo_drivers
+
+    # need to set ROS_DISTRO to the correct version for the bridge to work correctly
+    environment:
+    - ROS_DISTRO=humble
 
   limo_drivers:
     image: lcas.lincoln.ac.uk/lcas/limo_platform:staging
+    pull_policy: always
     build:
       context: ..
       cache_from:
@@ -20,18 +46,95 @@ services:
         - lcas.lincoln.ac.uk/cache/lcas/limo_platform:latest
         - lcas.lincoln.ac.uk/lcas/limo_platform:staging
         - lcas.lincoln.ac.uk/lcas/limo_platform:2
+    user: "ros"
 
-      args:
-        - BASE_IMAGE=lcas.lincoln.ac.uk/lcas/ros-docker-images:westonrobot-humble-2
-
+    # expose desktop access
     ports:
-      - 5801
-      - 5901
-      - 9999
+      # port for novnc
+      - 5801:5801
+      - 5901:5901
+      # port for code-serer
+      - 9999:9999
     
-    hostname: testlimo
-    privileged: false
-    command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; code-server --auth none -an coltrane --bind-addr 0.0.0.0:9999"
+    # NOTE: We expect the environment varibable ROBOT_NAME to be set, e.g. in `.env`
+    hostname: "${ROBOT_NAME}"
+    # nned privileged mode to access the camera and hardware
+    privileged: true
+    ipc: host
+    #command: bash -c "while true; do sleep 10; done"
+    #command: bash -c "zenoh-bridge-ros2dds -r 8080 -l tcp/0.0.0.0:8888"
+    command: bash -c "source /opt/ros/lcas/install/setup.bash; echo $$CYCLONEDDS_URI; (code-server --auth none -an ${ROBOT_NAME} --bind-addr 0.0.0.0:9999 &);(ros2 launch astra_camera dabai.launch.py &); ros2 launch limo_bringup limo_start.launch.py"
     volumes:
-    runtime: 
-    restart: no
+      - /dev:/dev
+      - ${HOME}:/home/ros/robot_home
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    runtime: nvidia
+    shm_size: '2gb' 
+    environment:
+      # always use virtual desktop
+      - DISPLAY:1
+
+      # - >
+      #   CYCLONEDDS_URI=
+      #   <CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+      #     <Domain id="0">
+      #       <General>
+      #         <AllowMulticast>true</AllowMulticast>
+      #         <MaxMessageSize>65500B</MaxMessageSize>
+      #         <FragmentSize>4000B</FragmentSize> 
+      #         <Transport>udp</Transport>
+      #         <Interfaces>
+      #             <NetworkInterface name="eth0"/>
+      #         </Interfaces>
+      #       </General>
+      #       <Discovery>
+      #         <Peers>
+      #           <!--<Peer address="limo_drivers"/>-->
+      #           <!--<Peer address="LIMO-1522"/>-->
+      #           <!--<Peer address="[IPV6-address]"/>--> 
+      #         </Peers>
+      #         <ParticipantIndex>auto</ParticipantIndex>
+      #         <MaxAutoParticipantIndex>100</MaxAutoParticipantIndex>
+      #       </Discovery>
+      #       <Internal>
+      #         <Watermarks>
+      #           <WhcHigh>500kB</WhcHigh>
+      #         </Watermarks>
+      #       </Internal>
+      #       <Tracing>
+      #         <Verbosity>info</Verbosity>
+      #         <OutputFile>stderr</OutputFile>
+      #       </Tracing>
+      #     </Domain>
+      #   </CycloneDDS>
+      # - 'LIBGL_ALWAYS_SOFTWARE=1'
+      # - 'ROS_DOMAIN_ID=0'
+      # - 'NVIDIA_VISIBLE_DEVICES=all'
+    #network_mode: host
+    networks:
+      - rosnet
+    cap_add:
+        - NET_ADMIN
+        - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+
+networks:
+  rosnet:
+    driver: bridge
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.100.0.0/16
+    driver_opts:
+      com.docker.network.container_iface_prefix: eth
