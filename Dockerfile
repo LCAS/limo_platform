@@ -46,6 +46,22 @@ INCLUDE .docker/glog.dockerfile
 INCLUDE .docker/magic_enum.dockerfile
 INCLUDE .docker/uvc.dockerfile
 
+# Install Speaker Utils
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    portaudio19-dev \
+    alsa-utils \
+    espeak \
+    libespeak-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add user to audio group
+RUN usermod -a -G audio ros
+
+# Install Python packages as the ros user
+USER ros
+RUN pip3 install --user sounddevice
+USER root
 
 # This stage is named 'sourcefilter' and is based on the 'base' image.
 # It performs the following actions:
@@ -129,24 +145,8 @@ RUN . /opt/ros/lcas/install/setup.sh && \
 RUN cd /opt/ros/lcas && colcon build && \
     rm -rf /opt/ros/lcas/src/ /opt/ros/lcas/build/ /opt/ros/lcas/log/
 
-# Install Speaker Utils
-RUN apt-get update && apt-get install -y \
-    python3-pip \
-    python3-sounddevice \
-    portaudio19-dev \
-    alsa-utils \
-    espeak \
-    libespeak-dev
-
-# Add user to audio group
-RUN usermod -a -G audio ros
-
 # Install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
-
-# Install Python packages as the ros user
-USER ros
-RUN pip3 install --user sounddevice
 
 # # Install sounddevice in system Python
 # RUN pip3 install sounddevice
