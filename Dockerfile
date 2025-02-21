@@ -129,13 +129,16 @@ RUN . /opt/ros/lcas/install/setup.sh && \
 RUN cd /opt/ros/lcas && colcon build && \
     rm -rf /opt/ros/lcas/src/ /opt/ros/lcas/build/ /opt/ros/lcas/log/
 
-RUN curl -fsSL https://code-server.dev/install.sh | sh
-
 # Install Speaker Utils
 RUN apt update -y
-RUN apt install -y portaudio19-dev python3-pyaudio espeak libespeak-dev
+RUN apt install -y portaudio19-dev python3-pyaudio espeak libespeak-dev alsa-utils
+# Install sounddevice in system Python
 RUN pip3 install sounddevice
+# Install sounddevice in virtual environment
+RUN /opt/venv/bin/pip install sounddevice
 RUN usermod -a -G audio ros
+
+RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 USER ros
 WORKDIR /home/ros
