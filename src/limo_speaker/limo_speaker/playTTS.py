@@ -30,7 +30,11 @@ class LimoSpeakerPlayTTS(Node):
             self.get_logger().warning(f"No sound device found with name containing '{device_name}'")
             return
 
-        file_path = f"/tmp/tts.wav" ### doing this temporarily, will change to using tempfile later
+        # Create a temporary file to store the speech, 
+        # this is using tempfile to make a safe file name
+        # e.g. tts_a1b2c3.wav
+        temp = tempfile.NamedTemporaryFile(prefix="tts_", suffix=".wav")
+        file_path = temp.name
 
         try:
             with wave.open(file_path, 'rb') as wf:

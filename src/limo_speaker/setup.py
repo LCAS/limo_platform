@@ -12,6 +12,7 @@ setup(
         (os.path.join('share', package_name), ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
         (os.path.join('share', package_name), ['resource/' + package_name]),
+        (os.path.join('share', package_name, 'sounds'), glob('*.wav')),
     ],
     install_requires=[
         'setuptools',

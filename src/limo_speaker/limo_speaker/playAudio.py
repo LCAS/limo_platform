@@ -4,6 +4,7 @@ import sounddevice as sd
 import numpy as np
 import wave
 from std_msgs.msg import String
+from ament_index_python.packages import get_package_share_directory
 
 class LimoSpeakerPlayAudio(Node):
     def __init__(self):
@@ -25,8 +26,8 @@ class LimoSpeakerPlayAudio(Node):
             self.get_logger().warning(f"No sound device found with name containing '{device_name}'")
             return
 
-        ## This puts it in the limo_platform/configs/sounds folder in the repo!
-        file_path = f"/home/ros/robot_home/limo_platform/configs/sounds/{sound}.wav"
+        # Take the sounds that have been installed with the package
+        file_path = f"{get_package_share_directory("limo_speaker")}/sounds/{sound}.wav"
 
         try:
             with wave.open(file_path, 'rb') as wf:
