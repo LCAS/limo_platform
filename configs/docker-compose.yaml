@@ -125,9 +125,5 @@ services:
 networks:
   rosnet:
     driver: bridge
-    ipam:
-     driver: default
-     config:
-       - subnet: 172.100.0.0/16
     driver_opts:
       com.docker.network.container_iface_prefix: eth
