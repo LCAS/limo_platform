@@ -34,12 +34,10 @@ class LimoSpeakerPlayTTS(Node):
         # this is using tempfile to make a safe file name
         # e.g. tts_a1b2c3.wav
         temp = tempfile.NamedTemporaryFile(prefix="tts_", suffix=".wav")
-        file_path = temp.name
+        os.system(f'espeak "{text}" -w {temp.name}')
 
         try:
-            with wave.open(file_path, 'rb') as wf:
-                os.system(f'espeak "{text}" -w {file_path}')
-                
+            with wave.open(temp.name, 'rb') as wf:
                 samplerate = wf.getframerate()
                 frames = wf.readframes(wf.getnframes())
 
@@ -62,7 +60,7 @@ class LimoSpeakerPlayTTS(Node):
                 sd.play(data, samplerate=samplerate, device=device_index)
                 sd.wait()
         except Exception as e:
-            self.get_logger().warning(f"Couldn't play file {file_path}, does the file exist? Error: {e}")
+            self.get_logger().warning(f"Couldn't play file {temp.name}, does the file exist? Error: {e}")
 
     # Finds the first audio device containing the given name.
     def get_speaker_by_name(self, name_contains):

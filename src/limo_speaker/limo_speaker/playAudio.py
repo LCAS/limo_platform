@@ -5,6 +5,7 @@ import numpy as np
 import wave
 from std_msgs.msg import String
 from ament_index_python.packages import get_package_share_directory
+import os
 
 class LimoSpeakerPlayAudio(Node):
     def __init__(self):
@@ -27,7 +28,7 @@ class LimoSpeakerPlayAudio(Node):
             return
 
         # Take the sounds that have been installed with the package
-        file_path = f"{get_package_share_directory("limo_speaker")}/sounds/{sound}.wav"
+        file_path = (os.path.join(get_package_share_directory('limo_speaker'), 'sounds', f"{sound}.wav"))
 
         try:
             with wave.open(file_path, 'rb') as wf:
