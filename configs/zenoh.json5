@@ -92,12 +92,16 @@
             "/joint_states",
             "/ydlidar_ros2_driver_node/transition_event",
             "/initialpose",
-            "/cmd_vel"
+            "/cmd_vel",
+            "/speaker/play",
+            "/speaker/tts",
         ],
         subscribers: [
             "/cmd_vel",
             "/tf",
-            "/tf_static"
+            "/tf_static",
+            "/speaker/play",
+            "/speaker/tts",
         ],
         service_servers: [".*/.*_parameters"],
         service_clients: [],
