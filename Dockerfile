@@ -137,5 +137,6 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh
 # # Install sounddevice in virtual environment
 # RUN /opt/venv/bin/pip install sounddevice
 
+USER ros
 WORKDIR /home/ros
 ENV SHELL=/bin/bash
