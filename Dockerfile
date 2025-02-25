@@ -45,7 +45,7 @@ INCLUDE .docker/ydlidar.dockerfile
 INCLUDE .docker/glog.dockerfile
 INCLUDE .docker/magic_enum.dockerfile
 INCLUDE .docker/uvc.dockerfile
-
+INCLUDE .docker/speaker.dockerfile
 
 # This stage is named 'sourcefilter' and is based on the 'base' image.
 # It performs the following actions:
@@ -129,7 +129,13 @@ RUN . /opt/ros/lcas/install/setup.sh && \
 RUN cd /opt/ros/lcas && colcon build && \
     rm -rf /opt/ros/lcas/src/ /opt/ros/lcas/build/ /opt/ros/lcas/log/
 
+# Install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
+
+# # Install sounddevice in system Python
+# RUN pip3 install sounddevice
+# # Install sounddevice in virtual environment
+# RUN /opt/venv/bin/pip install sounddevice
 
 USER ros
 WORKDIR /home/ros
