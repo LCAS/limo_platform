@@ -4,11 +4,13 @@ name: Build Docker image
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+      - jazzy
     tags:
       - 'v*'
   pull_request:
-    branches: [ main ]
+    branches:
 
 jobs:
   build-docker-image:
@@ -21,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - base_image: lcas.lincoln.ac.uk/lcas/ros-docker-images:westonrobot-humble-2.1
+          - base_image: lcas.lincoln.ac.uk/lcas/ros-docker-images:westonrobot-jazzy
   
     steps:
     - name: Node Js
