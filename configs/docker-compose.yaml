@@ -3,6 +3,7 @@ services:
   filebrowser:
     image: filebrowser/filebrowser
     pull_policy: always
+    restart: always
     networks:
       - rosnet
     ports:
@@ -14,6 +15,7 @@ services:
   zenoh_router: 
     image: eclipse/zenoh-bridge-ros2dds:latest
     pull_policy: always
+    restart: always
     networks:
       - rosnet
     # expose REST API, and Zenoh API
@@ -39,6 +41,7 @@ services:
   limo_drivers:
     image: lcas.lincoln.ac.uk/lcas/limo_platform:2
     pull_policy: always
+    restart: always
     user: "ros"
 
     # expose desktop access
